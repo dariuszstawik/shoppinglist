@@ -143,6 +143,7 @@
       href="pwa/apple-splash-1136-640.png"
       media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
     />
+    <script src="https://kit.fontawesome.com/c2006c9dc5.js" crossorigin="anonymous"></script>
   </head>
   <body>
     <header class = "header">
@@ -150,13 +151,15 @@
     </header>
     <section class = "add-elements">
       <h2 class = "add-elements__heading">do kupienia</h2>
+      <form class = "add-elements__form" action = "">
       <input type = "text" class = "add-elements__input">
       <button class = "add-elements__btn">dodaj do listy</button>
+    </form>
     </section>
     <section class = "shopping-list">
-      <div class = "shopping-list__item">...</div>
-      <div class = "shopping-list__item--bought">...</div>
-      <div class = "shopping-list__item--lack"></div>
+      <ul class = "shopping-list__items"></ul>
+      <ul class = "shopping-list__items--bought"></ul>
+      <ul class = "shopping-list__items--lack"></ul>
     </section>
 
     <section class = "reset">
@@ -166,4 +169,5 @@
 
     </div>
   </body>
+
 </html>
