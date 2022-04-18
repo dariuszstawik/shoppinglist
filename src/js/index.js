@@ -9,11 +9,11 @@ import '../scss/main.scss';
 console.log("Halo, tu mówi index.js");
 
 class Item {
-    constructor (name) {
+    constructor (name, toBuy = true, bought = false, lack = false) {
         this.name = name;
-        this.toBuy = true;
-        this.bought = false;
-        this.lack = false;
+        this.toBuy = toBuy;
+        this.bought = bought;
+        this.lack = lack;
     }
 
     buyItem() {
@@ -36,6 +36,14 @@ class Item {
 class ShoppingList {
     constructor () {
         this.list = [];
+        // let that = this;
+        // let savedList = localStorage.getItem('savedList');
+        // if (savedList) {
+        //     let lista = JSON.parse(savedList);              
+        //     for (let i=0; i<lista.length; i++) {
+        //         that.list[i] = lista[i];
+        //     }
+        // }
         this.itemsList = document.querySelector(".shopping-list__items");
         // this.itemsBoughtList = document.querySelector("shopping-list__items--bought");
         // this.itemsLackList = document.querySelector(".shopping-list__items--lack");
@@ -43,9 +51,13 @@ class ShoppingList {
 
     addItemToList(item) {
         this.list.push(item);
+        localStorage.setItem('savedList', JSON.stringify(this.list));
         console.log(`wyświetlam wartość this.list: ${this.list}`);
         let newItem = document.createElement("li");
         newItem.innerHTML = item.name;
+        console.log(item.name, item.toBuy, item.bought, item.lack);
+
+
         let boughtIcon = document.createElement("span");
         boughtIcon.className = "fa-solid fa-check";
         let lackIcon = document.createElement("span");
@@ -57,16 +69,34 @@ class ShoppingList {
         this.itemsList.appendChild(lackIcon);
         this.itemsList.appendChild(deleteIcon);
 
+        if (item.bought === true) {
+            newItem.style.backgroundColor = "green";
+        }
+
+        else if (item.lack === true) {
+            newItem.style.backgroundColor = "red";
+        }
+
+        // getNewItem() {
+        //     return newItem;
+        // }
+
         boughtIcon.addEventListener("click", () => {
             console.log("kliknąłeś, że kupione");
             item.buyItem();
+            localStorage.setItem('savedList', JSON.stringify(this.list));
             newItem.style.backgroundColor = "green";
             console.log(item.toBuy);
         })
 
+        // getBoughtIcon() {
+        //     return boughtIcon
+        // }
+
         lackIcon.addEventListener("click", () => {
             console.log("kliknąłeś, że nie ma");
             item.lackItem();
+            localStorage.setItem('savedList', JSON.stringify(this.list));
             newItem.style.backgroundColor = "red";
             console.log(item.lack);
         })
@@ -77,7 +107,14 @@ class ShoppingList {
             boughtIcon.remove();
             lackIcon.remove();
             deleteIcon.remove();
+            let index = this.list.indexOf(item);
+            this.list.splice(index,1);
+            localStorage.setItem('savedList', JSON.stringify(this.list));
         })
+
+    }
+
+    markItemAsBought() {
 
     }
 
@@ -85,6 +122,7 @@ class ShoppingList {
         console.log(`wyświetlam wartość this.list w resecie: ${this.list}`);
         this.list.length = 0;
         this.itemsList.textContent = "";
+        localStorage.clear();
     }
 
 }
@@ -93,13 +131,39 @@ class Main {
 
     constructor() {
         this.myShoppingList = new ShoppingList();
-        // this.firstItem = new Item('makaron');
+        
+
+        let savedList = localStorage.getItem('savedList');
+        if (savedList) {
+            let lista = JSON.parse(savedList);
+            console.log(lista);
+                
+            for (let i=0; i<lista.length; i++) {
+                // this.myShoppingList.list[i] = lista[i];
+                console.log("uzupełniam listę");
+                // let abc = lista[i];
+                console.log(lista[i]);
+                this.firstItem = new Item(lista[i].name, lista[i].toBuy, lista[i].bought, lista[i].lack);
+                this.myShoppingList.addItemToList(this.firstItem);
+                // if (lista[i].bought = true) {
+                //     this.firstItem.buyItem;
+                //     // getNewItem().style.backgroundColor = "green";
+                // }
+                // else if (lista[i].lack = true) {
+                //     this.firstItem.lackItem;
+                // }  
+            };
+        };
+
+
         let myForm = document.querySelector(".add-elements__form");
         let myInput = document.querySelector(".add-elements__input");
         let resetBtn = document.querySelector(".reset__btn");
 
 
         console.log(`wyświetlam wartość this input: ${this.input}`);
+
+        // let boughtButtons = document.getElementsByClassName('fa-solid fa-check');
 
         myForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -111,6 +175,7 @@ class Main {
             this.myShoppingList.addItemToList(this.firstItem);
             myInput.value = "";
         });
+
         resetBtn.addEventListener("click", (e) => {
             this.myShoppingList.resetList();
         });
